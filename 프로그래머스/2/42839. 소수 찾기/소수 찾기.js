@@ -20,7 +20,7 @@ function solution(numbers) {
     // 순열 문제와 달리, 다 붙이고 검사하는 게 아니라 매번 검사한다.
     // isprime을 내부적으로 검사해서 true일때마다 answer++
     var result = []
-    const primes = []
+    const primes = new Set()
     
     function dfs() {
 
@@ -30,9 +30,10 @@ function solution(numbers) {
         
             if (isPrime(candidate)) {
                 console.log(parseInt(result.join('')))
-                if (!primes.includes(candidate)) {
+                
+                if (!primes.has(candidate)) {
                     answer++
-                    primes.push(candidate)
+                    primes.add(candidate)
                 }
 
                 // 여기서 return 하면 추가적인 소수를 알 수 없게됨
