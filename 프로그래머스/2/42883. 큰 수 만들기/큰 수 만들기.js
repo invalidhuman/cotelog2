@@ -1,40 +1,42 @@
 function solution(number, k) {
     var answer = '';
     
-    console.log(typeof number) // number는 문자열로 주어짐
-    
-    console.log(number[1] < number[2]) // 어차피 0~9 중 하나이므로 숫자로 변환하지 않아도 JS에서는 문자열의 사전식 비교가 일어난다. 
-    // 즉, Number(number[i]) 나 parseInt(number[i]) 를 쓰지 않아도 된다. 
-    
-    // k는 mutable 지역변수
+    // k개의 수 제거 : 부분수열
+    // [19,12,14,92,94,24] 중 가장 큰 것
+    // 모든 경우를 만든 다음찾기엔 n : 100만
+    // 깊이우선도 X
     
     const stack = []
     
-    // number를 왼쪽부터 순회하며 숫자를 stack 에 넣는다.
-    // 현재 숫자가 stack의 마지막 숫자보다 크다면, 더 큰 수를 만들 수 있으므로 stack의 마지막 숫자를 제거한다.
-    // 제거하고 나면 그 앞의 숫자가 stack의 top이되는데 이것과도 물론 비교한 뒤 현재 숫자가 더 크다면 제거한다.
-    // 이 과정을 k가 다 떨어지지않고, 현재 숫자가 더 큰 동안 반복한다.
+    // 순서가 있으며, 앞자리가 중요.
+    // stack에 넣어놓고, 더 큰게 있는지비교해서, 더 크면 바꾼다.
+    // 더 작으면 더쌓는다.
+    // .at(-1) 기준 더 큰걸 만나면, 앞으로 가면서 pop()을 진행한다.
+    // 빼다보니 k를 다쓰면 그대로 return
+    // k가 남으면 남은건버리고 return
     
-    for (let i=0; i <number.length; i++) {
-        while (k > 0 && stack.length >0 && number[i] > stack.at(-1)) {
+    
+    for (let i =0; i< number.length; i++) {
+        
+        // 새로들어온게 stack의 top보다 크다면
+        while (k>0 && stack.at(-1) < number[i]) {
+            // top 이 더 큰 경우를 만날때까지 계속 pop
             stack.pop()
             k--
         }
         
-        // 앞의 숫자를 제거했든 안했든, 현재 숫자는 stack에 추가한다.
-        // k === 0이 된 이후에도 나머지 숫자들은 결과에 포함되어야 하므로 계속 push 한다.
+        // 빼는 건 while에서 처리하고 나오면 공통처리인 push
         stack.push(number[i])
     }
     
-    // "98765"처럼 계속 내림차순이거나 "99999"처럼 반복되는 경우,
-    // 현재 숫자가 stack의 top보다 커지는 상황이 충분히 나오지 않으면 k가 남을 수 있다.(앞의 숫자를 제거할 기회가 부족함)
-    // 이 경우 뒤쪽 숫자부터 남은 k개를 제거해야 가장 큰 수가 된다
-    if (k>0) {
-        for (let j = 0; j < k; j++) {
-            stack.pop()
-        }
+    // k가 남는 경우는 for문 바깥에서 처리
+//     if (k>0) {
+        
+//     }
+    while (k>0) {
+        stack.pop()
+        k--
     }
+    
     return stack.join('')
 }
-
-// 정렬X
