@@ -1,14 +1,9 @@
 function solution(board)
 {
-    var answer = 0;
-    
     // 1, 0, 
     // DP -> 작은 정사각형부터 찾기?
-    
-    // 탐색을...bfs?
     // 입력은 '직사각형' 일 수 있음
     
-    // 탐색
     // '정사각형'일 조건이 더 큰 범위에서 성립할때마다 그 정사각형의 넓이를 반환
     // 정사각형은 n*n -> 1*1 2*2 3*3
     // 그럼 양옆이 0인경우를 볼필요가있나? 
@@ -41,24 +36,25 @@ function solution(board)
             if (board[row][col] === 0) continue
             
             // 0이 아니면 무조건 1일테니
-            // 1인 것중에, 세 방향의 값이 같으면 +1해야함
+            // 1인 것중에, 세 방향중 최솟값을 찾고, 그값에서 현재값(1) 추가
             
            
-            dp[row][col] = Math.min(dp[row-1][col-1],dp[row-1][col],dp[row][col-1]) + 1
+            dp[row][col] 
+                = Math.min(dp[row-1][col-1],dp[row-1][col],dp[row][col-1]) + 1
            
             
         }
     }
         
-        
+    let side = 0
     
     for (let row = 0; row< board.length; row++) {
         for (let col = 0; col < board[0].length; col++) {
-            answer = Math.max(answer,dp[row][col])               
+            side = Math.max(side,dp[row][col])               
         }
     }
     
-    return answer*answer;
+    return side*side;
 }
 
 // 안이 비어도 '정사각형'인가? '선' 기준?
