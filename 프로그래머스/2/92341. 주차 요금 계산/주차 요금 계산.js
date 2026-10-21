@@ -6,78 +6,61 @@
 // 최종적으로 다 기록을 먼저 한 뒤,
 // 마지막이 'IN'인건 없는지 검사 -> 23:59를 더한다
 // 기본 시간보다 작은지를 검사
-
 // 23:59 - 18:59 = 5시간 -> 300
 
-// Map을 하나씩 돌면서 answer에 결과를 추가
-
-
-
 function solution(fees, records) {
-    var answer = []
+    const answer = []
+    const recordMap = new Map()
     
-    // records[i] = "05:34 5961 IN"
-    // "06:34 0000 OUT"
-    // split해서 Map에 저장
-    // [time, car, in] = 
-    const recordMap = new Map();
-    
-    const resultMap = new Map();
-    
+    // 1. records에 있는 기록들을 Map에 누적
     for (const record of records) {
-        const [time1,car,kind] = record.split(' ')
+        const [timeStr,car,type] = record.split(' ')
+        const [h,m] = timeStr.split(":").map(Number)
         
-        resultMap.set(car,0)
+        let time = h*60 + m
+        time = type === 'IN' ? -time : time
         
-        const [m,s] = time1.split(':').map(Number)
-        let time = m*60 + s
-        time = kind==='IN' ? time*(-1) : time
-        console.log('time:',time)
-        
-        if (recordMap.has(car)) {
-            recordMap.set(car,recordMap.get(car)+time)
-        } else {
-            recordMap.set(car, time)
-        }
+        // undefined일 때 0을 반환하도록 ?? 연산자 사용
+        recordMap.set(car, (recordMap.get(car) ?? 0) + time)
+        // ??는 원랜 null, undefined 둘 다에 해당하는 연산.
     }
     
+    // 정렬. key들만 가져와서 배열로 만든 후 오름차순 정렬
     const sortedCars = [...recordMap.keys()].sort()
     
-    // IN으로 끝난다는건, 음수가 저장됐다는것.
-    // 입 출 입 -> '입 출'의 결과보다는 무조건 마지막 '입'이 더 클 수밖에없다.
-    for (const [key,value] of recordMap) {
-        
-        
-        if (value <= 0) {
-            recordMap.set(key, value + 23*60 + 59)
-        }
-        
-        let newval = recordMap.get(key)
-
-        const exceedFee = Math.ceil(Math.max(newval-fees[0],0)/fees[2])
-        
-        const result = fees[1] + exceedFee*fees[3]
-        console.log(result)
-        // fee : 180, 5000, 10, 600
-        resultMap.set(key,result)
-    }
-    
-
-    
+    // 정렬된 차들 순서대로 반복하며 Map에 접근하여 요금계산
     for (const car of sortedCars) {
-        const result = resultMap.get(car)
+        let total = recordMap.get(car)
         
-        answer.push(result)
+        // 값이 0미만이면 입차기록만있었다는 뜻. 
+        // 0이면 00:00에 입차한 입차기록만 있었다는 뜻.
+        if (total <= 0) {
+            total += 23*60 + 59
+        }
+        console.log(total)
+        
+        const exceedTime = Math.max(total - fees[0], 0)
+        const exceedFee = fees[1] + Math.ceil(exceedTime / fees[2]) * fees[3]
+
+        answer.push(exceedFee)
     }
+    
+    
+    
     
     return answer
 }
 
-// 요금표, 입차기록, 출차기록
+// fees : 요금표
+// records : 입차기록, 출차기록 배열
+// 첫 번째 예시기준
 // <=180분 : 5000원
-// >180분에서 10분추가시마다 600원
+// >180분에서 10분추가시마다 600원인데 올림으로 계산
+// ex. 초과시간 / 단위 시간
+// = 181 - 180 / 10 = 1 / 10 으로 안나눠떨어지니 0.1을 올림해서 1
 
 
 // [V] 출차를 안하는 경우가 있나?
-// [ ] 근데 차량번호대로 정렬해야함
-    // 차량번호 순서를 담은 배열이나 Map이 필요
+// [V] 근데 차량번호대로 정렬해야함
+    // Map을 쓸거니 Map에 일단 저장해두고,
+    // 차량들을 정렬해둔 배열을 써서 그 순서대로 Map을 다시 확인
