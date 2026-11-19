@@ -21,12 +21,12 @@ def solution(str1, str2):
     for i in range(len(str1)-1): # 0,1,2,3,..,n-1에서 n-1을 하면 안됨
         pair = str1[i:i+2] # i부터 i+1까지
         
-        if (pair.isalpha() and pair.isascii()): result1.append(pair)
+        if (pair.isalpha() ): result1.append(pair)
     
     for i in range(len(str2)-1): # 0,1,2,3,..,n-1에서 n-1을 하면 안됨
         pair = str2[i:i+2] # i부터 i+1까지
         
-        if (pair.isalpha() and pair.isascii()): result2.append(pair)
+        if (pair.isalpha() ): result2.append(pair)
     
     countA = {}
     countB = {}
